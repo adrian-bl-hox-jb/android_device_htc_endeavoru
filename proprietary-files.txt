@@ -277,3 +277,5 @@ lib/hw/gps.tegra.so
 lib/hw/hwcomposer.tegra.so
 lib/hw/nfc.endeavoru.so
 lib/hw/sensors.endeavoru.so
+
+app/PGPSDownloader.apk

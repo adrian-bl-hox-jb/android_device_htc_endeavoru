@@ -180,7 +180,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 	wifi.softapconcurrent.interface=wlan1 \
 	persist.sys.usb.config=mass_storage,adb \
 	ro.telephony.ril_class=QualcommSharedRIL \
-	ro.telephony.ril.v3=signalstrength
+	ro.telephony.ril.v3=signalstrength,skipbrokendatacall
 
 $(call inherit-product-if-exists, hardware/ti/wan/mac80211/Android.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)

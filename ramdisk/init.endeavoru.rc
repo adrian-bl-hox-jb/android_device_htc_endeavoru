@@ -82,8 +82,8 @@ on boot
     chown media system /sys/htc/cpu_temp
 
 # Define DATA USAGE CTRL file permission
-	chown system system /proc/net/xt_qtaguid/ctrl
-    chmod 0664 /proc/net/xt_qtaguid/ctrl
+    chown system system /proc/net/xt_qtaguid/ctrl
+    chmod 0666 /proc/net/xt_qtaguid/ctrl
 
 # Load modules while booting
 	insmod /system/lib/modules/compat.ko

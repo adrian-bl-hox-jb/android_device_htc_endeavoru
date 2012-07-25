@@ -23,6 +23,7 @@ on emmc-fs
     mkdir /devlog 0700 root root
     mount ext4 /dev/block/mmcblk0p19 /devlog nosuid nodev
     start poweron_modem
+    start pollyd
 
 loglevel 8
 
@@ -241,6 +242,11 @@ service akmd /system/bin/akmd
     class main
     user compass
     group compass misc input
+
+service pollyd /system/bin/pollyd
+    class main
+    user root
+    group root
     
 # gyro daemon
 service ewtzmud /system/bin/ewtzmud

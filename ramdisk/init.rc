@@ -418,10 +418,8 @@ service modem-daemon /system/bin/modemd
 service ril-daemon /system/bin/rild
     class main
     socket rild stream 660 root radio
-    socket rild-htc stream 660 radio radio
     socket rild-audio stream 660 radio radio
     socket rild-debug stream 660 radio system
-    socket rild-audio-gsm stream 660 radio system
     socket rild-htc-coredump stream 660 radio system
     socket rild-agps stream 660 radio system
     user root

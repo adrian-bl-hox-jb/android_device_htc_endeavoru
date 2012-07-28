@@ -128,9 +128,12 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 	audio.a2dp.default \
 	libaudioutils \
-	libtinyalsa	
-PRODUCT_COPY_FILES += \
-	$(LOCAL_PATH)/prebuilt/bin/pollyd:system/bin/pollyd
+	libtinyalsa
+
+# pollyd
+PRODUCT_PACKAGES += \
+	pollyd \
+	Polly
 
 # NFC firmware
 PRODUCT_COPY_FILES += \

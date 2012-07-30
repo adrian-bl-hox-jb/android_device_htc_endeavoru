@@ -100,9 +100,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/vold.fstab:system/etc/vold.fstab
 
-# Lights
+# Custom HALs
 PRODUCT_PACKAGES += \
-	lights.tegra
+	lights.tegra \
+	power.tegra
 
 # Keyboard
 PRODUCT_COPY_FILES += \

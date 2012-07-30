@@ -9,6 +9,12 @@ on early-init
     mkdir /mnt/sdcard 0775 system system
     symlink /mnt/sdcard /sdcard
 
+on early-boot
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
+
 on emmc-fs
     mount ext4 /dev/block/mmcblk0p12 /system wait rw
     mount ext4 /dev/block/mmcblk0p15 /data wait rw noatime nosuid nodev noauto_da_alloc
@@ -65,6 +71,27 @@ on boot
     chmod 0660 /sys/kernel/debug/tegra_hotplug/min_cpus
     chown system /sys/htc/power_save
     chown system /sys/kernel/debug/tegra_emc/eack_state
+
+# Power management settings
+    write /sys/module/cpu_tegra3/parameters/no_lp 0
+    write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
+    write /sys/devices/system/cpu/cpufreq/interactive/input_boost 1
+    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 80
+    write /sys/module/cpuidle/parameters/lp2_in_idle 0
+    write /sys/kernel/debug/tegra_hotplug/max_cpus 4
+    write /sys/module/cpu_tegra3/parameters/auto_hotplug 1
+
+# Interactive governor settings
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/boost_factor
+    chmod 0664 /sys/devices/system/cpu/cpufreq/interactive/boost_factor
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
+    chmod 0664 /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
+    chmod 0664 /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/max_boost
+    chmod 0664 /sys/devices/system/cpu/cpufreq/interactive/max_boost
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/sustain_load
+    chmod 0664 /sys/devices/system/cpu/cpufreq/interactive/sustain_load
 
     # for radio signal stable
     chown radio radio /sys/class/power_supply/battery/charger_control
@@ -185,39 +212,6 @@ on boot
     write /proc/sys/net/ipv6/conf/rmnet0/accept_ra 2
     write /proc/sys/net/ipv6/conf/rmnet1/accept_ra 2
     write /proc/sys/net/ipv6/conf/rmnet2/accept_ra 2
-
-# Power management settings
-    write /sys/module/cpu_tegra3/parameters/no_lp 0
-    #write /sys/module/tegra3_emc/parameters/emc_enable 0
-    #write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 1000000
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ondemand
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor ondemand
-    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor ondemand
-    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor ondemand
-    chown system /sys/devices/system/cpu/cpufreq/ondemand/sampling_rate_min
-    chown system /sys/devices/system/cpu/cpufreq/ondemand/sampling_rate
-    chown system /sys/devices/system/cpu/cpufreq/ondemand/sampling_rate_max
-    chown system /sys/devices/system/cpu/cpufreq/ondemand/sampling_down_factor
-    chown system /sys/devices/system/cpu/cpufreq/ondemand/io_is_busy
-    chown system /sys/devices/system/cpu/cpufreq/ondemand/up_threshold
-    chown system /sys/devices/system/cpu/cpufreq/ondemand/touch_poke
-    chown system /sys/htc/power_save
-    write /sys/devices/system/cpu/cpufreq/ondemand/sampling_rate_min 10000
-    write /sys/devices/system/cpu/cpufreq/ondemand/sampling_rate 50000
-    write /sys/devices/system/cpu/cpufreq/ondemand/sampling_down_factor 4
-    write /sys/devices/system/cpu/cpufreq/ondemand/io_is_busy 1
-    write /sys/devices/system/cpu/cpufreq/ondemand/up_threshold 90
-    #write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
-    #write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
-    #write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
-    #write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
-    #write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
-    #write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 80
-    write /sys/devices/system/cpu/cpu1/online 0
-    write /sys/devices/system/cpu/cpu2/online 0
-    write /sys/devices/system/cpu/cpu3/online 0
-    write /sys/kernel/debug/tegra_hotplug/max_cpus 1
-    write /sys/module/cpuidle/parameters/lp2_in_idle 1
 
 # Increase read ahead size of mmc block devices from default(128) to 1MB
 # Reduces power comsuption during video playback from sdcards
@@ -452,6 +446,4 @@ service post_boot /system/bin/sh /system/etc/post_boot.sh
 	oneshot
 
 on property:init.svc.bootanim=stopped
-    write /sys/kernel/debug/tegra_hotplug/max_cpus 4
-    write /sys/module/cpu_tegra3/parameters/auto_hotplug 1
     start post_boot

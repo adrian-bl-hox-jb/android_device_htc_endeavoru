@@ -46,14 +46,14 @@ PRODUCT_COPY_FILES := \
 	$(LOCAL_PATH)/ramdisk/ueventd.endeavoru.rc:root/ueventd.endeavoru.rc
 
 PRODUCT_COPY_FILES += \
-	$(LOCAL_PATH)/configs/gps.conf:system/etc/gps.conf \
-	$(LOCAL_PATH)/configs/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf \
-	$(LOCAL_PATH)/configs/hostapd.conf:system/etc/wifi/hostapd.conf \
-	$(LOCAL_PATH)/configs/nvcamera.conf:system/etc/nvcamera.conf \
-	$(LOCAL_PATH)/configs/asound.conf:system/etc/asound.conf \
-	$(LOCAL_PATH)/configs/AIC3008_REG_DualMic_XC.csv:system/etc/AIC3008_REG_DualMic_XC.csv \
-	$(LOCAL_PATH)/configs/AIC3008_REG_DualMic.csv:system/etc/AIC3008_REG_DualMic.csv \
-	$(LOCAL_PATH)/configs/alsa.conf:system/usr/share/alsa/alsa.conf
+	$(LOCAL_PATH)/prebuilt/etc/gps.conf:system/etc/gps.conf \
+	$(LOCAL_PATH)/prebuilt/etc/wifi/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf \
+	$(LOCAL_PATH)/prebuilt/etc/wifi/hostapd.conf:system/etc/wifi/hostapd.conf \
+	$(LOCAL_PATH)/prebuilt/etc/nvcamera.conf:system/etc/nvcamera.conf \
+	$(LOCAL_PATH)/prebuilt/etc/asound.conf:system/etc/asound.conf \
+	$(LOCAL_PATH)/prebuilt/etc/AIC3008_REG_DualMic_XC.csv:system/etc/AIC3008_REG_DualMic_XC.csv \
+	$(LOCAL_PATH)/prebuilt/etc/AIC3008_REG_DualMic.csv:system/etc/AIC3008_REG_DualMic.csv \
+	$(LOCAL_PATH)/prebuilt/usr/share/alsa/alsa.conf:system/usr/share/alsa/alsa.conf
 
 # GPS Certificate
 PRODUCT_COPY_FILES += \
@@ -175,8 +175,8 @@ PRODUCT_COPY_FILES += \
 
 # Custom media config for HTC camera
 PRODUCT_COPY_FILES += \
-	$(LOCAL_PATH)/configs/media_profiles.xml:system/etc/media_profiles.xml \
-	$(LOCAL_PATH)/configs/media_codecs.xml:system/etc/media_codecs.xml
+	$(LOCAL_PATH)/prebuilt/etc/media_profiles.xml:system/etc/media_profiles.xml \
+	$(LOCAL_PATH)/prebuilt/etc/media_codecs.xml:system/etc/media_codecs.xml
 
 PRODUCT_PROPERTY_OVERRIDES += \
 	ro.sf.lcd_density=320 \

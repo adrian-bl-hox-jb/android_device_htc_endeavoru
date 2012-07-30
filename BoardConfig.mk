@@ -55,7 +55,7 @@ TARGET_BOARD_PLATFORM := tegra
 ENABLE_WEBGL := true
 
 # graphics
-BOARD_EGL_CFG := device/htc/endeavoru/configs/egl.cfg
+BOARD_EGL_CFG := device/htc/endeavoru/prebuilt/lib/egl/egl.cfg
 USE_OPENGL_RENDERER := true
 
 # Bluetooth

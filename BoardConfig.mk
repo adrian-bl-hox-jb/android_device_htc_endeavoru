@@ -18,7 +18,6 @@
 TARGET_BOOTLOADER_BOARD_NAME := 
 TARGET_NO_BOOTLOADER := true
 
-
 # cpu info
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
@@ -27,6 +26,11 @@ TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_ARCH_VARIANT_CPU := cortex-a9
 ARCH_ARM_HAVE_NEON := true
 ARCH_ARM_HAVE_TLS_REGISTER := true
+TARGET_BOARD_PLATFORM := tegra
+TARGET_TEGRA_VERSION := t30
+BASE_CFLAGS := -mfpu=neon -mfloat-abi=softfp
+TARGET_GLOBAL_CFLAGS += $(BASE_CFLAGS)
+TARGET_GLOBAL_CPPFLAGS += $(BASE_CFLAGS)
 
 # use endeavor init script
 TARGET_PROVIDES_INIT_TARGET_RC := true
@@ -48,15 +52,10 @@ BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1342177280
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 2302672896
 BOARD_FLASH_BLOCK_SIZE := 4096
 
-# tegra platform
-TARGET_BOARD_PLATFORM := tegra
-
-# Enable WEBGL in WebKit
-ENABLE_WEBGL := true
-
 # graphics
 BOARD_EGL_CFG := device/htc/endeavoru/prebuilt/lib/egl/egl.cfg
 USE_OPENGL_RENDERER := true
+ENABLE_WEBGL := true
 
 # Bluetooth
 BOARD_HAVE_BLUETOOTH := true

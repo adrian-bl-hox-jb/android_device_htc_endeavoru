@@ -290,6 +290,11 @@ service nav /system/bin/navl_server --android_log NAVD-p3 -nav\"-c/system/bin/pa
 service rxn_intapp /system/bin/RXN_IntApp /system/etc/gps/RXN/MSLConfig.txt
     class main
 
+service rilPos-daemon /system/bin/rilposd -l /system/lib/librilpos.so -- -c agps_v_channel
+    class main
+    disabled
+    oneshot
+
 service cplc_main /system/bin/cplc_main
     class main
     disabled

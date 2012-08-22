@@ -36,6 +36,7 @@ bin/navl_server
 bin/cplc_main
 bin/GPSCConfigFile.cfg
 bin/pathconfigfile.txt
+bin/patch-X.0.ce
 
 # uim (bluetooth, fm, etc,.)
 bin/uim-sysfs

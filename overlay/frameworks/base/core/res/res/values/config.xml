@@ -146,6 +146,7 @@
         <item>"mobile_fota,10,0,2,60000,true"</item>
         <item>"mobile_ims,11,0,2,60000,true"</item>
         <item>"mobile_cbs,12,0,2,60000,true"</item>
+        <item>"mobile_bluetooth,7,7,1,-1,true"</item>
         <item>"wifi_p2p,13,1,0,-1,true"</item>
     </string-array>
 
@@ -649,7 +650,7 @@
 
     <!-- Boolean indicating if current platform supports quick switch-on/off of
          Bluetooth Module -->
-    <bool name="config_bluetooth_adapter_quick_switch">true</bool>
+<!--    <bool name="config_bluetooth_adapter_quick_switch">true</bool> -->
 
     <!-- The default data-use polling period. -->
     <integer name="config_datause_polling_period_sec">600</integer>

@@ -85,6 +85,19 @@ static void endeavoru_power_set_interactive(struct power_module *module, int on)
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
                 on ? "0" : "2");
 
+    sysfs_write("/sys/module/cpu_tegra/parameters/cpu_user_cap",
+                on ? "0" : "1200000");	
+    
+    sysfs_write("/sys/kernel/tegra_cap/core_cap_level",
+                on ? "1300" : "1200");	
+
+    sysfs_write("/sys/kernel/tegra_cap/core_cap_state", "1");	
+    
+    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/max_boost",
+                on ? "0" : "250000");	
+
+    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load",
+                on ? "85" : "95");	
 }
 
 static void endeavoru_power_hint(struct power_module *module, power_hint_t hint,

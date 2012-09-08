@@ -25,10 +25,6 @@
 #include <hardware/hardware.h>
 #include <hardware/power.h>
 
-#define BOOST_PATH      "/sys/devices/system/cpu/cpufreq/interactive/boost"
-static int boost_fd = -1;
-static int boost_warned;
-
 static void sysfs_write(char *path, char *s)
 {
     char buf[80];
@@ -52,21 +48,10 @@ static void sysfs_write(char *path, char *s)
 
 static void endeavoru_power_init(struct power_module *module)
 {
-    /*
-     * cpufreq interactive governor: timer 20ms, min sample 100ms,
-     * hispeed 700MHz at load 40%
-     */
-
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/timer_rate",
-                "20000");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/min_sample_time",
                 "30000");
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load",
-                "80");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
 		"0");
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost",
-		"1");
 }
 
 static void endeavoru_power_set_interactive(struct power_module *module, int on)
@@ -78,9 +63,6 @@ static void endeavoru_power_set_interactive(struct power_module *module, int on)
 
     sysfs_write("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq",
                 on ? "1500000" : "475000");
-
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost",
-                on ? "1" : "0");
 
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
                 on ? "0" : "2");
@@ -94,10 +76,10 @@ static void endeavoru_power_set_interactive(struct power_module *module, int on)
     sysfs_write("/sys/kernel/tegra_cap/core_cap_state", "1");	
     
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/max_boost",
-                on ? "0" : "250000");	
+                on ? "0" : "250000");
 
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load",
-                on ? "85" : "95");	
+		on ? "85" : "95");
 }
 
 static void endeavoru_power_hint(struct power_module *module, power_hint_t hint,

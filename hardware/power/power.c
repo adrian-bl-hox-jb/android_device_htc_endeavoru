@@ -50,6 +50,8 @@ static void endeavoru_power_init(struct power_module *module)
 {
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/min_sample_time",
                 "30000");
+    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load",
+                "80");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
 		"0");
 }
@@ -79,7 +81,7 @@ static void endeavoru_power_set_interactive(struct power_module *module, int on)
                 on ? "0" : "250000");
 
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load",
-		on ? "85" : "95");
+                on ? "85" : "95");
 }
 
 static void endeavoru_power_hint(struct power_module *module, power_hint_t hint,

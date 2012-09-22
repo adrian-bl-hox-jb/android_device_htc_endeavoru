@@ -1,5 +1,3 @@
-ro.ril.ecc.VODA-Africa-South=112,911,999
-ro.ril.ecc.HTC-GCC=999,112,997
 ro.ril.ecc.HTC-WWE=999
 ro.ril.ecc.HTC-Dutch=112
 ro.ril.ecc.HTC-SPA=112, 911
@@ -42,9 +40,23 @@ ro.ril.edpcch.pwr.boost=1
 ro.ril.hspa.mac.ehs=1
 
 ro.ril.enable.imc.feature=1
+
 ro.ril.projectname=endeavoru
+
 ro.ril.stkprof.param=FFFFFFFF7F0000DF9703021F2200000000000000000040100000000000000000
+
+persist.muxd.debug=7
+
+# Icera fild
+modem.fild.rootdir=/data/rfs
+modem.fild.blocksize=65528
+modem.fild.baudrate=3500000
+modem.fild.hif=0
+modem.fild.coredump=enabled
+modem.fild.coredumpdir=/data/rfs/data/debug
+modem.power.device=/sys/class/gpio/gpio32/value,0,1
 ro.ril.devicename=/dev/ttyACM1
+modem.powercontrol=disabled
 
 rild.libpath=/system/lib/libhtc_ril.so
 rild.libargs=-e wwan0

@@ -271,6 +271,10 @@ service init-acmx2 /system/bin/chmod 777 /dev/ttyACMX0
     class core
     oneshot
 
+service fil-daemon /system/bin/fild -p /dev/ttyHS0 -s /dev/ttyACM0 -f /dev/ttyACM0 --with-bt3
+    user radio
+
+
 service poweron_modem /system/bin/poweron_modem_fls.sh /data/modem_work/
     class main
     user root

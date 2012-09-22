@@ -146,7 +146,6 @@
         <item>"mobile_fota,10,0,2,60000,true"</item>
         <item>"mobile_ims,11,0,2,60000,true"</item>
         <item>"mobile_cbs,12,0,2,60000,true"</item>
-        <item>"mobile_bluetooth,7,7,1,-1,true"</item>
         <item>"wifi_p2p,13,1,0,-1,true"</item>
     </string-array>
 
@@ -187,17 +186,14 @@
          USB interfaces.  If the device doesn't want to support tething over USB this should
          be empty.  An example would be "usb.*" -->
     <string-array translatable="false" name="config_tether_usb_regexs">
-        <item>"usb0"</item>
+        <item>usb0</item>
     </string-array>
 
     <!-- List of regexpressions describing the interface (if any) that represent tetherable
          Wifi interfaces.  If the device doesn't want to support tethering over Wifi this
          should be empty.  An example would be "softap.*" -->
     <string-array translatable="false" name="config_tether_wifi_regexs">
-        <item>"wlan0"</item>
-        <item>"wlan1"</item>
-        <item>"wl0.1"</item>
-        <item>"tiap0"</item>
+        <item>wlan0</item>
     </string-array>
 
     <!-- List of regexpressions describing the interface (if any) that represent tetherable
@@ -210,7 +206,8 @@
          bluetooth interfaces.  If the device doesn't want to support tethering over bluetooth this
          should be empty. -->
     <string-array translatable="false" name="config_tether_bluetooth_regexs">
-        <item>"bnep\\d"</item>
+	<item>tap_brcm_bt_pan</item>    
+	<item>bnep\\d</item>
     </string-array>
 
     <!-- Max number of Bluetooth tethering connections allowed. If this is
@@ -259,10 +256,8 @@
     <!-- Common options are [1, 4] for TYPE_WIFI and TYPE_MOBILE_DUN or
     <!== [0,1,5,7] for TYPE_MOBILE, TYPE_WIFI, TYPE_MOBILE_HIPRI and TYPE_BLUETOOTH -->
     <integer-array translatable="false" name="config_tether_upstream_types">
-        <item>0</item>
         <item>1</item>
-        <item>5</item>
-        <item>7</item>
+        <item>4</item>
     </integer-array>
 
     <!-- If the DUN connection for this CDMA device supports more than just DUN -->
@@ -291,7 +286,7 @@
          This mechanism allows the host to remain in suspend state and the dongle to actively
          scan and wake the host when a configured SSID is detected by the dongle. This chipset
          capability can provide power savings when wifi needs to be always kept on. -->
-    <bool translatable="false" name="config_wifi_background_scan_support">false</bool>
+    <bool translatable="false" name="config_wifi_background_scan_support">true</bool>
 
     <!-- Integer indicating wpa_supplicant scan interval in milliseconds -->
     <integer translatable="false" name="config_wifi_supplicant_scan_interval">15000</integer>
@@ -567,16 +562,16 @@
          than the size of the config_autoBrightnessLevels array.
          This must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLcdBacklightValues">
-        <item>1</item>
-        <item>11</item>
-        <item>23</item>
-        <item>35</item>
-        <item>48</item>
-        <item>55</item>
-        <item>80</item>
-        <item>150</item>
-        <item>200</item>
-        <item>255</item>
+        <item>58</item>
+	<item>58</item>
+	<item>58</item>
+	<item>88</item>
+	<item>118</item>
+	<item>133</item>
+	<item>167</item>
+	<item>196</item>
+	<item>225</item>
+	<item>255</item>
     </integer-array>
 
     <!-- Array of output values for button backlight corresponding to the LUX values
@@ -584,11 +579,11 @@
          than the size of the config_autoBrightnessLevels array.
          This must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessButtonBacklightValues">
-        <item>60</item>
-        <item>60</item>
-        <item>60</item>
-        <item>60</item>
-        <item>0</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>-1</item>
         <item>0</item>
         <item>0</item>
         <item>0</item>
@@ -601,22 +596,22 @@
          than the size of the config_autoBrightnessLevels array.
          This must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessKeyboardBacklightValues">
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>-1</item>
         <item>0</item>
         <item>0</item>
         <item>0</item>
         <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
+	<item>0</item>
     </integer-array>
 
     <!-- Amount of time it takes for the light sensor to warm up in milliseconds.
          For this time after the screen turns on, the Power Manager
          will not debounce light sensor readings -->
-    <integer name="config_lightSensorWarmupTime">10</integer>
+    <integer name="config_lightSensorWarmupTime">0</integer>
 
     <!-- Enables swipe versus poly-finger touch disambiguation in the KeyboardView -->
     <bool name="config_swipeDisambiguation">true</bool>

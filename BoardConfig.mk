@@ -91,6 +91,9 @@ WIFI_FIRMWARE_LOADER := ""
 WIFI_BAND := 802_11_ABGN
 COMMON_GLOBAL_CFLAGS += -DUSES_TI_MAC80211
 
+# RIL
+BOARD_USE_NEW_LIBRIL_HTC := true
+
 # Kernel building
 TARGET_KERNEL_SOURCE := kernel/htc/endeavor
 TARGET_KERNEL_CONFIG :=  endeavoru_android_defconfig

@@ -4,24 +4,28 @@
 # This is a common source of Android security bugs.
 #
 
-import /init.${ro.hardware}.rc
 import /init.usb.rc
+import /init.${ro.hardware}.rc
 import /init.trace.rc
 
 on early-init
     # Set init and its forked children's oom_adj.
     write /proc/1/oom_adj -16
 
+    # Set the security context for the init process.
+    # This should occur before anything else (e.g. ueventd) is started.
+    setcon u:r:init:s0
+
     start ueventd
 
 # create mountpoints
-    mkdir /mnt 0777 root system
+    mkdir /mnt 0775 root system
 
 on init
 
 sysclktz 0
 
-loglevel 8
+loglevel 3
 
 # setup the global environment
     export PATH /sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
@@ -44,17 +48,23 @@ loglevel 8
     symlink /system/vendor /vendor
 
 # Create cgroup mount point for cpu accounting
-    mkdir /acct 0777
+    mkdir /acct
     mount cgroup none /acct cpuacct
-    mkdir /acct/uid 0777
+    mkdir /acct/uid
 
     mkdir /system
     mkdir /data 0771 system system
     mkdir /cache 0770 system cache
     mkdir /config 0500 root root
 
+    # See storage config details at http://source.android.com/tech/storage/
+    mkdir /mnt/shell 0700 shell shell
+    mkdir /storage 0050 root sdcard_r
+
     # Directory for putting things only root should see.
     mkdir /mnt/secure 0700 root root
+    # Create private mountpoint so we can MS_MOVE from staging
+    mount tmpfs tmpfs /mnt/secure mode=0700,uid=0,gid=0
 
     # Directory for staging bindmounts
     mkdir /mnt/secure/staging 0700 root root
@@ -62,8 +72,6 @@ loglevel 8
     # Directory-target for where the secure container
     # imagefile directory will be bind-mounted
     mkdir /mnt/secure/asec  0700 root root
-   
-    mkdir /mnt/tmp 0777 root root
 
     # Secure container public mount points.
     mkdir /mnt/asec  0700 root system
@@ -127,24 +135,36 @@ on fs
 on post-fs
     # once everything is setup, no need to modify /
     mount rootfs rootfs / ro remount
+    # mount shared so changes propagate into child namespaces
+    mount rootfs rootfs / shared rec
+    mount tmpfs tmpfs /mnt/secure private rec
 
     # We chown/chmod /cache again so because mount is run as root + defaults
     chown system cache /cache
     chmod 0770 /cache
+    # We restorecon /cache in case the cache partition has been reset.
+    restorecon /cache
 
     # This may have been created by the recovery system with odd permissions
     chown system cache /cache/recovery
     chmod 0770 /cache/recovery
+    # This may have been created by the recovery system with the wrong context.
+    restorecon /cache/recovery
 
     #change permissions on vmallocinfo so we can grab it from bugreports
     chown root log /proc/vmallocinfo
     chmod 0440 /proc/vmallocinfo
+
+    chown root log /proc/slabinfo
+    chmod 0440 /proc/slabinfo
 
     #change permissions on kmsg & sysrq-trigger so bugreports can grab kthread stacks
     chown root system /proc/kmsg
     chmod 0440 /proc/kmsg
     chown root system /proc/sysrq-trigger
     chmod 0220 /proc/sysrq-trigger
+    chown system log /proc/last_kmsg
+    chmod 0440 /proc/last_kmsg
 
     # create the lost+found directories, so as to enforce our permissions
     mkdir /cache/lost+found 0770 root root
@@ -153,6 +173,8 @@ on post-fs-data
     # We chown/chmod /data again so because mount is run as root + defaults
     chown system system /data
     chmod 0771 /data
+    # We restorecon /data in case the userdata partition has been reset.
+    restorecon /data
 
     # Create dump dir and collect dumps.
     # Do this before we mount cache so eventually we can use cache for
@@ -172,8 +194,8 @@ on post-fs-data
 
     # create basic filesystem structure
     mkdir /data/misc 01771 system misc
-    mkdir /data/misc/bluetoothd 0770 bluetooth bluetooth
     mkdir /data/misc/adb 02750 system shell
+    mkdir /data/misc/bluedroid 0770 bluetooth net_bt_stack
     mkdir /data/misc/bluetooth 0770 system system
     mkdir /data/misc/keystore 0700 keystore keystore
     mkdir /data/misc/keychain 0771 system system
@@ -196,7 +218,6 @@ on post-fs-data
     mkdir /data/property 0700 root root
     mkdir /data/ssh 0750 root shell
     mkdir /data/ssh/empty 0700 root root
-    mkdir /data/radio 0770 radio radio
 
     # create dalvik-cache, so as to enforce our permissions
     mkdir /data/dalvik-cache 0771 system system
@@ -248,6 +269,7 @@ on boot
     chown radio system /sys/android_power/acquire_full_wake_lock
     chown radio system /sys/android_power/acquire_partial_wake_lock
     chown radio system /sys/android_power/release_wake_lock
+    chown system system /sys/power/autosleep
     chown system system /sys/power/state
     chown system system /sys/power/wakeup_count
     chown radio system /sys/power/wake_lock
@@ -302,7 +324,6 @@ on boot
     chown system system /sys/kernel/ipv4/tcp_rmem_def
     chown system system /sys/kernel/ipv4/tcp_rmem_max
     chown root radio /proc/cmdline
-    chown media system /dev/mux9
 
 # Define TCP buffer sizes for various networks
 #   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
@@ -311,8 +332,12 @@ on boot
     setprop net.tcp.buffersize.lte     524288,1048576,2097152,262144,524288,1048576
     setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
     setprop net.tcp.buffersize.hspa    4094,87380,262144,4096,16384,262144
+    setprop net.tcp.buffersize.hsupa   4094,87380,262144,4096,16384,262144
+    setprop net.tcp.buffersize.hsdpa   4094,87380,262144,4096,16384,262144
+    setprop net.tcp.buffersize.hspap   4094,87380,1220608,4096,16384,1220608
     setprop net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
     setprop net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680
+    setprop net.tcp.buffersize.evdo    4094,87380,262144,4096,16384,262144
 
 # Set this property so surfaceflinger is not started by system_init
     setprop system_init.startsurfaceflinger 0
@@ -351,6 +376,11 @@ on property:vold.decrypt=trigger_shutdown_framework
 service ueventd /sbin/ueventd
     class core
     critical
+    seclabel u:r:ueventd:s0
+
+on property:selinux.reload_policy=1
+    restart ueventd
+    restart installd
 
 service console /system/bin/sh
     class core
@@ -365,7 +395,9 @@ on property:ro.debuggable=1
 # adbd is controlled via property triggers in init.<platform>.usb.rc
 service adbd /sbin/adbd
     class core
+    socket adbd stream 660 system system
     disabled
+    seclabel u:r:adbd:s0
 
 # adbd on at boot in emulator
 on property:ro.kernel.qemu=1
@@ -383,13 +415,13 @@ service servicemanager /system/bin/servicemanager
 
 service vold /system/bin/vold
     class core
-    socket vold stream 0660 root mount system
+    socket vold stream 0660 root mount
     ioprio be 2
 
 service netd /system/bin/netd
     class main
     socket netd stream 0660 root system
-    socket dnsproxyd stream 0660 root inet system
+    socket dnsproxyd stream 0660 root inet
     socket mdns stream 0660 root system
 
 service debuggerd /system/bin/debuggerd
@@ -399,7 +431,6 @@ service gsm0710mux /system/bin/gsm0710muxd -s /dev/ttyACM0 -v 5 -n 8 -m basic
     class core
     user radio
     group radio cache inet misc
-#    oneshot
     disabled
 
 service nvm-server /system/bin/nvm_server
@@ -409,15 +440,6 @@ service nvm-server /system/bin/nvm_server
     group root
     oneshot
 
-service init-acmx0 /system/bin/mknod /dev/ttyACMX0 c 66 0
-    class core
-    oneshot
-
-service init-acmx2 /system/bin/chmod 777 /dev/ttyACMX0
-    class core
-    oneshot
-
-service modem-daemon /system/bin/modemd
 
 service ril-daemon /system/bin/rild
     class main
@@ -427,12 +449,12 @@ service ril-daemon /system/bin/rild
     socket rild-htc-coredump stream 660 radio system
     socket rild-agps stream 660 radio system
     user root
-    group radio cache inet misc audio sdcard_rw log
+    group radio cache inet misc audio log
 
 service surfaceflinger /system/bin/surfaceflinger
     class main
     user system
-    group graphics
+    group graphics drmrpc
     onrestart restart zygote
 
 service zygote /system/bin/app_process -Xzygote /system/bin --zygote --start-system-server
@@ -443,10 +465,10 @@ service zygote /system/bin/app_process -Xzygote /system/bin --zygote --start-sys
     onrestart restart media
     onrestart restart netd
 
-service drm /system/xbin/strace -f -o /data/drm.strace /system/bin/drmserver
+service drm /system/bin/drmserver
     class main
     user drm
-    group drm system inet drmrpc sdcard_r
+    group drm system inet drmrpc
 
 service media /system/bin/mediaserver
     class main
@@ -460,21 +482,6 @@ service bootanim /system/bin/bootanimation
     group graphics
     disabled
     oneshot
-
-service dbus /system/bin/dbus-daemon --system --nofork
-    class main
-    socket dbus stream 660 bluetooth bluetooth
-    user bluetooth
-    group bluetooth net_bt_admin
-
-service bluetoothd /system/bin/bluetoothd -n
-    class main
-    socket bluetooth stream 660 bluetooth bluetooth
-    socket dbus_bluetooth stream 660 bluetooth bluetooth
-    # init.rc does not yet support applying capabilities, so run as root and
-    # let bluetoothd drop uid to bluetooth with the right linux capabilities
-    group bluetooth net_bt_admin misc
-    disabled
 
 service installd /system/bin/installd
     class main
@@ -523,26 +530,3 @@ service mdnsd /system/bin/mdnsd
     socket mdnsd stream 0660 mdnsr inet
     disabled
     oneshot
-
-service L2PE /system/bin/l2_profile_exchange handset wlan1
-    user root
-    group root
-    disabled
-    oneshot
-
-service charging /system/bin/charging
-    user root
-    group root
-    disabled
-    oneshot
-
-service netHDencode /system/bin/netHDencode wlan0 3655
-    user root
-    group root
-    disabled
-    oneshot
-
-service memlock /system/bin/memlock
-   class main
-   user root
-   group root

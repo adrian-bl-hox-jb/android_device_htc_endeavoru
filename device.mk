@@ -42,7 +42,6 @@ PRODUCT_COPY_FILES := \
 	$(LOCAL_PATH)/ramdisk/init.rc:root/init.rc \
 	$(LOCAL_PATH)/ramdisk/init.usb.rc:root/init.usb.rc \
 	$(LOCAL_PATH)/ramdisk/init.endeavoru.rc:root/init.endeavoru.rc \
-	$(LOCAL_PATH)/ramdisk/ueventd.rc:root/ueventd.rc \
 	$(LOCAL_PATH)/ramdisk/ueventd.endeavoru.rc:root/ueventd.endeavoru.rc
 
 PRODUCT_COPY_FILES += \
@@ -157,7 +156,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 	wifi.interface=wlan0 \
 	wifi.softap.interface=wlan1 \
 	wifi.softapconcurrent.interface=wlan1 \
-	persist.sys.usb.config=mass_storage,adb \
+	persist.sys.usb.config=mtp,adb \
 	ro.telephony.ril_class=QualcommSharedRIL
 
 $(call inherit-product-if-exists, hardware/ti/wan/mac80211/Android.mk)

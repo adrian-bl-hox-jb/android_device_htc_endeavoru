@@ -38,7 +38,8 @@ on emmc-fs
     chmod 0660 /rfs
     mkdir /devlog 0700 root root
     mount ext4 /dev/block/mmcblk0p19 /devlog nosuid nodev
-    mount vfat /dev/block/mmcblk0p14 /data/media wait rw uid=1023 gid=1023
+    # cannot use builtin mount for this
+    exec /system/bin/mount -t vfat -o uid=1023,gid=1023,umask=0007 /dev/block/mmcblk0p14 /data/media
     start poweron_modem
     start pollyd
 

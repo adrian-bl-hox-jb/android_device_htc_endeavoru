@@ -40,7 +40,7 @@ on emmc-fs
     mount ext4 /dev/block/mmcblk0p19 /devlog nosuid nodev
     # cannot use builtin mount for this
     mkdir /data/media 0770 1023 1023
-    exec /system/bin/mount -t vfat -o uid=1023,gid=1023,umask=0007 /dev/block/mmcblk0p14 /data/media
+    exec /system/bin/sh /endeavoru_mounthelper.sh
     write /data/.layout_version 2
     # end sdcard mess
     start poweron_modem

@@ -121,6 +121,10 @@ PRODUCT_PACKAGES += \
 # Torch
 PRODUCT_PACKAGES += \
 	Torch		
+
+# Stock E-Mail
+PRODUCT_PACKAGES += \
+	Email
 		
 # Permissions
 PRODUCT_COPY_FILES += \

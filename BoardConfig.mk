@@ -60,6 +60,7 @@ ENABLE_WEBGL := true
 
 # Bluetooth
 BOARD_HAVE_BLUETOOTH := true
+BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/htc/endeavoru/bluetooth
 
 # HTC ril compatability
 BOARD_FORCE_RILD_AS_ROOT := true

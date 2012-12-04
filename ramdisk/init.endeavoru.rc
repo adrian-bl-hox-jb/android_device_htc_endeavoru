@@ -24,24 +24,37 @@ on early-boot
     write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
 
-on emmc-fs
+on fs
+    setprop ro.crypto.umount_sd false
+    
+    # create htc specific mount targets
+    mkdir /rca 0775 radio radio
+    mkdir /rfs 0755 radio radio
+    mkdir /devlog 0700 root root
+
+    # mount everything (to get the props trigger)
+    # adrian: broken: use old-style mounts for now
+    ### mount_all /fstab.endeavoru
+
     mount ext4 /dev/block/mmcblk0p12 /system wait rw
     mount ext4 /dev/block/mmcblk0p15 /data wait rw noatime nosuid nodev noauto_da_alloc
     mount ext4 /dev/block/mmcblk0p13 /cache wait rw noatime nosuid nodev noauto_da_alloc
-    mkdir /rca 0775 radio radio
     mount ext4 /dev/block/mmcblk0p3 /rca wait noatime ro
+    mount ext4 /dev/block/mmcblk0p18 /rfs wait noatime rw
+    mount ext4 /dev/block/mmcblk0p19 /devlog nosuid nodev
+
+    # ..and 'fix' permissions (silly HTC)
     chmod 0660 /rca/calib.nvm
     chmod 0660 /rca
-    mkdir /rfs 0755 radio radio
-    mount ext4 /dev/block/mmcblk0p18 /rfs wait noatime rw
     chmod 0660 /rfs
-    mkdir /devlog 0700 root root
-    mount ext4 /dev/block/mmcblk0p19 /devlog nosuid nodev
-    # cannot use builtin mount for this
-    mkdir /data/media 0770 1023 1023
-    exec /system/bin/sh /endeavoru_mounthelper.sh
+
+    # mount builtin sdcard
+    mkdir /data/media 0770 media_rw media_rw
+    mount vfat hox@1 /data/media wait rw
     write /data/.layout_version 2
+
     # end sdcard mess
+    start sdcard
     start poweron_modem
     start pollyd
 
@@ -55,7 +68,6 @@ on post-fs-data
     chown dhcp dhcp /data/misc/dhcp
     # Set indication (checked by vold) that we have finished this action
     setprop vold.post_fs_data_done 1
-
 
 on boot
 
@@ -231,8 +243,8 @@ on boot
 
 # Increase read ahead size of mmc block devices from default(128) to 1MB
 # Reduces power comsuption during video playback from sdcards
-#    write /sys/block/mmcblk0/queue/read_ahead_kb 2048
-#    write /sys/block/mmcblk1/queue/read_ahead_kb 2048
+    write /sys/block/mmcblk0/queue/read_ahead_kb 2048
+    write /sys/block/mmcblk1/queue/read_ahead_kb 2048
 
     # Discretix DRM change start
     mkdir /data/DxDrm
@@ -385,7 +397,16 @@ service iprenew_eth0 /system/bin/dhcpcd -n
 
 # virtual sdcard daemon running as media_rw (1023)
 service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
-    class late_start
+    class main
+    user root
+    group root
+
+# bugreport is triggered by the VOLUME-DOWN and VOLUME-UP keys
+service bugreport /system/bin/bugmailer.sh -b /system/media/audio/ui/Dock.ogg -e /system/media/audio/ui/Undock.ogg
+    class main
+    disabled
+    oneshot
+    keycodes 115 114
 
 service hostapd_bin /system/bin/logwrapper /system/bin/hostapd -dd /data/misc/wifi/hostapd.conf
     class main
@@ -393,19 +414,6 @@ service hostapd_bin /system/bin/logwrapper /system/bin/hostapd -dd /data/misc/wi
     disabled
     oneshot
 
-on property:wlan.driver.status=ok
-    chown wifi wifi /sys/devices/platform/wl1271/bt_coex_state
-    
-service initial_regdom /system/bin/initial_regdom.sh
-     disabled
-     oneshot
-
-on property:wlan.driver.status=ok
-    chown wifi wifi /sys/devices/platform/wl1271/bt_coex_state
-    start initial_regdom
-
-on property:init.svc.hostapd_bin=running
-    start initial_regdom
 
 service upd_nvs_wlan0 /system/bin/calibrator set upd_nvs /system/etc/wifi/TQS_D_1.7.ini /proc/calibration /data/misc/wifi/wl1271-nvs-calibrated.bin
 	class core
@@ -433,21 +441,6 @@ on property:tf.enable=y
     mkdir /data/tf
     start tf_daemon
 
-# Discretix DRM change start
-service dx_drm_server /system/bin/DxDrmServerIpc -f -o allow_other /data/DxDrm/fuse
-    class main
-# Discretix DRM change end
-
-# OMA DRM change start
-service fusermount /system/bin/fusermount -u /data/htcfs
-    disabled
-    oneshot
-
-service htcfs /system/bin/htcfs /data/htcfs -f -o allow_other
-    class main
-    onrestart restart fusermount
-# OMA DRM change end
-
 # create filesystems if necessary
 service setup_fs /system/bin/setup_fs \
         /dev/block/platform/sdhci-tegra.3/by-name/UDA \
@@ -457,30 +450,3 @@ service setup_fs /system/bin/setup_fs \
     user root
     group root
     oneshot
-
-service htc_ebdlogd /system/bin/htc_ebdlogd -s -k -P 7
-    user root
-    disabled
-    oneshot
-    ioprio idle 0
-
-service htc_ebdlogd_rel /system/bin/htc_ebdlogd -s -k
-    user root
-    disabled
-    oneshot
-    ioprio idle 0
-
-on property:ro.build.tags=test-keys
-    start htc_ebdlogd
-
-on property:ro.build.tags=release-keys
-    start htc_ebdlogd_rel
-
-service post_boot /system/bin/sh /system/etc/post_boot.sh
-	class main
-	user root
-	disabled
-	oneshot
-
-on property:init.svc.bootanim=stopped
-    start post_boot

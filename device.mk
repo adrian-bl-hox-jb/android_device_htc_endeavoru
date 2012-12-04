@@ -38,7 +38,6 @@ PRODUCT_LOCALES += en_US xhdpi
 # Init files
 PRODUCT_COPY_FILES := \
 	$(LOCAL_KERNEL):kernel \
-	$(LOCAL_PATH)/ramdisk/init:root/init \
 	$(LOCAL_PATH)/ramdisk/init.rc:root/init.rc \
 	$(LOCAL_PATH)/ramdisk/init.usb.rc:root/init.usb.rc \
 	$(LOCAL_PATH)/ramdisk/init.endeavoru.rc:root/init.endeavoru.rc \

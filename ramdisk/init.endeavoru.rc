@@ -32,29 +32,16 @@ on fs
     mkdir /rfs 0755 radio radio
     mkdir /devlog 0700 root root
 
-    # mount everything (to get the props trigger)
-    # adrian: broken: use old-style mounts for now
-    ### mount_all /fstab.endeavoru
 
-    mount ext4 /dev/block/mmcblk0p12 /system wait rw
-    mount ext4 /dev/block/mmcblk0p15 /data wait rw noatime nosuid nodev noauto_da_alloc
-    mount ext4 /dev/block/mmcblk0p13 /cache wait rw noatime nosuid nodev noauto_da_alloc
-    mount ext4 /dev/block/mmcblk0p3 /rca wait noatime ro
-    mount ext4 /dev/block/mmcblk0p18 /rfs wait noatime rw
-    mount ext4 /dev/block/mmcblk0p19 /devlog nosuid nodev
+    mount_all /fstab.endeavoru
 
     # ..and 'fix' permissions (silly HTC)
     chmod 0660 /rca/calib.nvm
     chmod 0660 /rca
     chmod 0660 /rfs
 
-    # mount builtin sdcard
-    mkdir /data/media 0770 media_rw media_rw
-    mount vfat hox@1 /data/media wait rw
-    write /data/.layout_version 2
-
-    # end sdcard mess
-    start sdcard
+    # start sdcard daemon and fire up the modem
+    start hox_sdcard_mount
     start poweron_modem
     start pollyd
 
@@ -296,6 +283,13 @@ service init-acmx0 /system/bin/mknod /dev/ttyACMX0 c 66 0
 service init-acmx2 /system/bin/chmod 777 /dev/ttyACMX0
     class core
     oneshot
+
+service hox_sdcard_mount /system/bin/sh /endeavoru_mounthelper.sh
+    class main
+    user root
+    group root
+    oneshot
+    disabled
 
 service poweron_modem /system/bin/poweron_modem_fls.sh /data/modem_work/
     class main

@@ -304,7 +304,7 @@ service uim /system/bin/uim-sysfs
     group media bluetooth
     oneshot
 
-service nav /system/bin/navl_server --android_log NAVD-p3 -nav\"-c/system/bin/pathconfigfile.txt\"
+service nav /system/bin/ugexec 0 1000 7 /system/bin/navl_server --android_log NAVD-p3 -nav\"-c/system/bin/pathconfigfile.txt\"
     class main
     user root
     oneshot

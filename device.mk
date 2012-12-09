@@ -109,6 +109,10 @@ PRODUCT_PACKAGES += \
 	pollyd \
 	Polly
 
+# ugexec from hox_tools
+PRODUCT_PACKAGES += \
+	ugexec
+
 # NFC firmware
 PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/prebuilt/lib/libpn544_fw.so:system/vendor/firmware/libpn544_fw.so

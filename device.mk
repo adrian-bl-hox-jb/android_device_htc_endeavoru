@@ -109,9 +109,11 @@ PRODUCT_PACKAGES += \
 	pollyd \
 	Polly
 
-# ugexec from hox_tools
+# hox tools
 PRODUCT_PACKAGES += \
-	ugexec
+	ugexec \
+	libbt-vendor \
+	hox-uim-sysfs
 
 # NFC firmware
 PRODUCT_COPY_FILES += \

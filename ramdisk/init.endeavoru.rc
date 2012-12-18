@@ -298,7 +298,7 @@ service poweron_modem /system/bin/poweron_modem_fls.sh /data/modem_work/
     oneshot
     disabled
 
-service uim /system/bin/uim-sysfs
+service uim /system/bin/hox-uim-sysfs
     class core
     user root
     group media bluetooth

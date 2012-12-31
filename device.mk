@@ -115,10 +115,6 @@ PRODUCT_PACKAGES += \
 	libbt-vendor \
 	hox-uim-sysfs
 
-# NFC firmware
-PRODUCT_COPY_FILES += \
-	$(LOCAL_PATH)/prebuilt/lib/libpn544_fw.so:system/vendor/firmware/libpn544_fw.so
-
 # Filesystem management tools
 PRODUCT_PACKAGES += \
 	make_ext4fs \

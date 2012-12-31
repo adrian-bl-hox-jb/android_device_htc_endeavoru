@@ -10,7 +10,6 @@ lib/drm/libdrmwvmplugin.so
 
 # nfc
 etc/nfcee_access.xml
-lib/libpn544_fw.so
 
 # keylayout
 usr/keylayout/tegra-kbc.kl

@@ -40,8 +40,10 @@ on fs
     chmod 0660 /rca
     chmod 0660 /rfs
 
-    # start sdcard daemon and fire up the modem
+    # mount internal storage
     start hox_sdcard_mount
+    wait /dev/.endeavoru_mounthelper_done 60
+    
     start poweron_modem
     start pollyd
 

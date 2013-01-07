@@ -122,9 +122,14 @@ PRODUCT_PACKAGES += \
 	e2fsck \
 	setup_fs
 
-# Torch
+# SIM Toolkit
 PRODUCT_PACKAGES += \
-	Torch		
+	Stk
+
+# init.d support
+PRODUCT_COPY_FILES += \
+	$(LOCAL_PATH)/prebuilt/etc/post-boot.sh:system/etc/post-boot.sh \
+	$(LOCAL_PATH)/ramdisk/bin/sysinit:system/bin/sysinit
 
 # Stock E-Mail
 PRODUCT_PACKAGES += \

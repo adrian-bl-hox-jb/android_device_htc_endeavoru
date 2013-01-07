@@ -42,7 +42,8 @@ PRODUCT_COPY_FILES := \
 	$(LOCAL_PATH)/ramdisk/init.usb.rc:root/init.usb.rc \
 	$(LOCAL_PATH)/ramdisk/init.endeavoru.rc:root/init.endeavoru.rc \
 	$(LOCAL_PATH)/ramdisk/ueventd.endeavoru.rc:root/ueventd.endeavoru.rc \
-        $(LOCAL_PATH)/ramdisk/fstab.endeavoru:root/fstab.endeavoru \
+        $(LOCAL_PATH)/ramdisk/fstab.endeavoru.ext4:root/fstab.endeavoru.ext4 \
+        $(LOCAL_PATH)/ramdisk/fstab.endeavoru.vfat:root/fstab.endeavoru.vfat \
 	$(LOCAL_PATH)/ramdisk/endeavoru_mounthelper.sh:root/endeavoru_mounthelper.sh
 
 PRODUCT_COPY_FILES += \

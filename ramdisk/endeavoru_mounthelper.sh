@@ -1,13 +1,10 @@
 #!/system/bin/sh
 
-PART_DATA="/dev/block/mmcblk0p15"
-DEST_DATA="/data"
-
-PART_SDCARD="/dev/block/mmcblk0p14"
+PART_SDCARD="/dev/block/platform/sdhci-tegra.3/by-name/ISD"
 DEST_SDCARD="/data/media"
 
-# same as /data - only used if sdcard is /data
-PART_DALVIK="/dev/block/mmcblk0p15"
+# use /data (UDA) as dalvik cache in bigdata mode
+PART_DALVIK="/dev/block/platform/sdhci-tegra.3/by-name/UDA"
 DEST_DALVIK="/data/dalvik-cache"
 
 ## mounts $PART_SDCARD to $DEST_SDCARD
@@ -23,20 +20,15 @@ function mount_vfat_sdcard() {
 	mount -t vfat -o uid=1023,gid=1023,umask=0007 ${PART_SDCARD} ${DEST_SDCARD}
 }
 
-## mount $PART_DATA as /data
-function mount_ext4_data() {
-	e2fsck -y ${PART_DATA}
-	mount -t ext4 -o noatime,nosuid,nodev,noauto_da_alloc,discard ${PART_DATA} ${DEST_DATA}
-}
-
 ## mount dalvik cache
 function mount_ext4_dalvik() {
 	mkdir               ${DEST_DALVIK}
-	chown system:system ${DEST_DALVIK}
-	chmod 0771          ${DEST_DALVIK}
 	
 	e2fsck -y ${PART_DALVIK}
 	mount -t ext4 -o noatime,nosuid,nodev,noauto_da_alloc,discard ${PART_DALVIK} ${DEST_DALVIK}
+	#ensure sane permissions for dalvik cache directory
+	chown system:system ${DEST_DALVIK}
+	chmod 0771          ${DEST_DALVIK}
 }
 
 ## migrates an 'old' storage layout to the 4.2 version
@@ -63,18 +55,19 @@ function migrate_vfat_sdcard() {
 
 ## main ##
 
-if blkid ${PART_SDCARD} | grep -q 'TYPE="ext4"' ; then
-	# sdcard is ext4, so we are going to use this as data!
-	PART_DATA=$PART_SDCARD
-	mount_ext4_data
-	mount_ext4_dalvik
-else
-	mount_ext4_data
+# exit if we are in 'enter decryption key' phase
+grep -q "tmpfs /data" /proc/mounts  && exit
+
+if blkid ${PART_SDCARD} | grep -q 'TYPE="vfat"' ; then
 	mount_vfat_sdcard
 	migrate_vfat_sdcard
+else
+	# sdcard is ext4, so we are going to use this as data!
+	mount_ext4_dalvik
 fi
 
-# tell init to continue
+
+## tell init to continue
 touch /dev/.endeavoru_mounthelper_done
 
 

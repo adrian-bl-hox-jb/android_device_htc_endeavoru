@@ -32,18 +32,16 @@ on fs
     mkdir /rfs 0755 radio radio
     mkdir /devlog 0700 root root
 
-
-    mount_all /fstab.endeavoru
+    # mount all devices.
+    # the correct fstab path is autoguessed
+    # by our patched init binary
+    mount_all /auto/guessed
 
     # ..and 'fix' permissions (silly HTC)
     chmod 0660 /rca/calib.nvm
     chmod 0660 /rca
     chmod 0660 /rfs
 
-    # mount internal storage
-    start hox_sdcard_mount
-    wait /dev/.endeavoru_mounthelper_done 60
-    
     start poweron_modem
     start pollyd
 
@@ -55,6 +53,11 @@ on post-fs-data
     mkdir /data/misc/wifi/hostapd 0777 wifi wifi
     mkdir /data/misc/dhcp 0777 dhcp dhcp
     chown dhcp dhcp /data/misc/dhcp
+    
+    # mount internal storage
+    start hox_sdcard_mount
+    wait /dev/.endeavoru_mounthelper_done 2
+    
     # Set indication (checked by vold) that we have finished this action
     setprop vold.post_fs_data_done 1
 

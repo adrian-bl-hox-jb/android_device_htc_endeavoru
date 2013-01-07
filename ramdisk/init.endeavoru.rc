@@ -32,10 +32,7 @@ on fs
     mkdir /rfs 0755 radio radio
     mkdir /devlog 0700 root root
 
-    # mount all devices.
-    # the correct fstab path is autoguessed
-    # by our patched init binary
-    mount_all /auto/guessed
+    mount_all /fstab.endeavoru
 
     # ..and 'fix' permissions (silly HTC)
     chmod 0660 /rca/calib.nvm

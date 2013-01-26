@@ -58,7 +58,7 @@ function migrate_vfat_sdcard() {
 # exit if we are in 'enter decryption key' phase
 grep -q "tmpfs /data" /proc/mounts  && exit
 
-if blkid ${PART_SDCARD} | grep -q 'TYPE="vfat"' ; then
+if readlink /fstab.endeavoru | grep -q vfat$ ; then
 	mount_vfat_sdcard
 	migrate_vfat_sdcard
 else

@@ -241,16 +241,12 @@ etc/soundimage/srsfx_trumedia_voice.cfg
 bin/htcbatt
 
 # misc
-lib/libnvcontrol_jni.so
-lib/libnvcpud.so
-lib/libnvcpud_client.so
 lib/libsurfaceflinger_client.so
 
 # image stabilization
 lib/libhtc_dis.so
 
 # lib/libhtc*
-lib/libhtc-opt2.so
 lib/libhtcsunny2engine.so
 lib/libhtcsunnyengine.so
 lib/libhtcsurfaces.so

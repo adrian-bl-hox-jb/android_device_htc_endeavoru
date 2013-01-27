@@ -42,6 +42,7 @@ on fs
 
     start poweron_modem
     start pollyd
+    start tegra-fqd
 
 
 on post-fs-data
@@ -251,6 +252,11 @@ service akmd /system/bin/akmd
     group compass misc input
 
 service pollyd /system/bin/pollyd
+    class main
+    user root
+    group root
+
+service tegra-fqd /system/bin/tegra-fqd
     class main
     user root
     group root

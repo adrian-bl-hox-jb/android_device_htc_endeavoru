@@ -114,7 +114,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 	ugexec \
 	libbt-vendor \
-	hox-uim-sysfs
+	hox-uim-sysfs \
+        tegra-fqd
 
 # Filesystem management tools
 PRODUCT_PACKAGES += \

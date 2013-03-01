@@ -154,8 +154,7 @@ etc/firmware/nvrm_avp_eff00000.bin
 etc/firmware/ti-connectivity/wl1271-nvs.bin
 etc/firmware/ti-connectivity/wl128x-fw-4-mr.bin
 etc/firmware/ti-connectivity/wl128x-fw-4-sr.bin
-etc/firmware/ti-connectivity/wl128x-fw-mr.bin.r4
-etc/firmware/ti-connectivity/wl128x-fw-mr.bin.r5
+etc/firmware/ti-connectivity/wl128x-fw-4-plt.bin
 bin/calibrator
 
 # stagefright
